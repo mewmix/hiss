@@ -8,79 +8,102 @@ from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
 import os
 from ecies import encrypt, decrypt
+from tkinter import messagebox
 
 class CryptoApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Crypto Toolbox")
+        self.root.title("Hissssss")
 
-        # Create buttons
-        self.pubkey_txn_btn = tk.Button(self.root, text="Pubkey Txn", command=self.pubkey_txn)
-        self.recover_pubkey_btn = tk.Button(self.root, text="Recover Public Key", command=self.recover_public_key)
-        self.encrypt_msg_btn = tk.Button(self.root, text="Encrypt Message", command=self.encrypt_message)
-        self.decrypt_msg_btn = tk.Button(self.root, text="Decrypt Message", command=self.decrypt_message)
-        self.encrypt_file_btn = tk.Button(self.root, text="Encrypt File", command=self.encrypt_file)
-        self.decrypt_file_btn = tk.Button(self.root, text="Decrypt File", command=self.decrypt_file)
 
-        # Arrange buttons in a grid
-        self.pubkey_txn_btn.grid(row=0, column=0, padx=10, pady=5)
-        self.recover_pubkey_btn.grid(row=1, column=0, padx=10, pady=5)
-        self.encrypt_msg_btn.grid(row=2, column=0, padx=10, pady=5)
-        self.decrypt_msg_btn.grid(row=3, column=0, padx=10, pady=5)
-        self.encrypt_file_btn.grid(row=4, column=0, padx=10, pady=5)
-        self.decrypt_file_btn.grid(row=5, column=0, padx=10, pady=5)
+        self.encrypt_file_button = tk.Button(self.root, text="Encrypt File", command=self.encrypt_file)
+        self.encrypt_file_button.pack()
+        self.decrypt_file_button = tk.Button(self.root, text="Decrypt File", command=self.decrypt_file)
+        self.decrypt_file_button.pack()
 
-    def pubkey_txn(self):
-        provider = input("Enter provider URL: ")  # User input
-        tx_hash = input("Enter transaction hash: ")  # User input
-        public_key, from_address = pubkey_txn(provider, tx_hash)
-        result = f"Recovered Public Key: {public_key}\nFrom Address: {from_address}"
-        self.show_result(result)
 
-    def recover_public_key(self):
-        private_key = input("Enter private key: ")  # User input
-        public_key = recover_public_key_from_private(private_key)
-        result = f"Recovered Public Key: {public_key}"
-        self.show_result(result)
 
-    def encrypt_message(self):
-        public_key = input("Enter recipient's public key: ")  # User input
-        message = input("Enter your secret message: ")  # User input
-        encrypted_message = encrypt_with_public_key(public_key, message)
-        self.show_result(encrypted_message)
+        self.public_key_label = tk.Label(self.root, text="Recipient's Public Key:")
+        self.public_key_label.pack()
 
-    def decrypt_message(self):
-        private_key = input("Enter your private key: ")  # User input
-        encrypted_message = input("Enter encrypted message bytes: ")  # User input
-        decrypted_message = decrypt_with_private_key(private_key, encrypted_message)
-        self.show_result(decrypted_message)
+        self.public_key_entry = tk.Entry(self.root)
+        self.public_key_entry.pack()
 
-    def encrypt_file(self):
-        public_key = input("Enter recipient's public key: ")  # User input
-        input_file_path = filedialog.askopenfilename(title="Select a file to encrypt")
-        if input_file_path:
-            output_file_path = filedialog.asksaveasfilename(title="Save encrypted file as")
-            if output_file_path:
-                encrypt_file(public_key, input_file_path, output_file_path)
-                self.show_result("File encrypted and saved.")
+        self.message_label = tk.Label(self.root, text="Secret Message:")
+        self.message_label.pack()
 
-    def decrypt_file(self):
-        private_key = input("Enter your private key: ")  # User input
-        input_file_path = filedialog.askopenfilename(title="Select a file to decrypt")
-        if input_file_path:
-            output_file_path = filedialog.asksaveasfilename(title="Save decrypted file as")
-            if output_file_path:
-                decrypt_file(private_key, input_file_path, output_file_path)
-                self.show_result("File decrypted and saved.")
+        self.message_entry = tk.Entry(self.root)
+        self.message_entry.pack()
+
+        self.encrypt_button = tk.Button(self.root, text="Encrypt", command=self.encrypt_message)
+        self.encrypt_button.pack()
+
+        self.private_key_label = tk.Label(self.root, text="Your Private Key:")
+        self.private_key_label.pack()
+
+        self.private_key_entry = tk.Entry(self.root)
+        self.private_key_entry.pack()
+
+        self.encrypted_message_label = tk.Label(self.root, text="Encrypted Message:")
+        self.encrypted_message_label.pack()
+
+        self.encrypted_message_entry = tk.Entry(self.root)
+        self.encrypted_message_entry.pack()
+
+        self.decrypt_button = tk.Button(self.root, text="Decrypt", command=self.decrypt_message)
+        self.decrypt_button.pack()
+
+        self.result_label = tk.Label(self.root, text="Result:")
+        self.result_label.pack()
+
+        self.result_text = tk.Text(self.root, height=5, width=40)
+        self.result_text.pack()
+
+        self.copy_button = tk.Button(self.root, text="Copy Result", command=self.copy_result)
+        self.copy_button.pack()
+    
 
     def show_result(self, result):
-        result_window = tk.Toplevel(self.root)
-        result_window.title("Result")
-        result_label = tk.Label(result_window, text=result, padx=10, pady=10)
-        result_label.pack()
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, result)
+        
+
+    def copy_result(self):
+        result = self.result_text.get(1.0, tk.END).strip()  # Remove trailing newline
+        self.root.clipboard_clear()
+        self.root.clipboard_append(result)
+        messagebox.showinfo("Copied", "Result has been copied to the clipboard!")
 
 
-  
+    def encrypt_file(self):
+        public_key_hex = self.public_key_entry.get()
+        input_file_path = filedialog.askopenfilename()
+        output_file_path = filedialog.asksaveasfilename()
+        encrypt_file(public_key_hex, input_file_path, output_file_path)
+        messagebox.showinfo("Success", "File has been encrypted!")
+
+    def decrypt_file(self):
+        private_key = self.private_key_entry.get()
+        input_file_path = filedialog.askopenfilename()
+        output_file_path = filedialog.asksaveasfilename()
+        decrypt_file(private_key, input_file_path, output_file_path)
+        messagebox.showinfo("Success", "File has been decrypted!")
+
+    def encrypt_message(self):
+        public_key_hex = self.public_key_entry.get()
+        message = self.message_entry.get()
+        encrypted_data = encrypt(public_key_hex, message.encode())
+        self.encrypted_message_entry.delete(0, tk.END)
+        self.encrypted_message_entry.insert(0, encrypted_data.hex())
+        self.show_result(encrypted_data.hex())
+
+    def decrypt_message(self):
+        private_key = self.private_key_entry.get()
+        encrypted_data = bytes.fromhex(self.encrypted_message_entry.get())
+        decrypted_data = decrypt(private_key, encrypted_data)
+        self.show_result(decrypted_data.decode())
+
+
 def pubkey_txn(provider, tx_hash):
     w3 = web3.Web3(web3.HTTPProvider(provider))
     tx = w3.eth.get_transaction(tx_hash)
@@ -131,6 +154,7 @@ def decrypt_with_private_key(private_key, encrypted):
     return decrypted.decode()
 
 
+
 def encrypt_file(public_key_hex, input_file_path, output_file_path):
     with open(input_file_path, 'rb') as f:
         file_data = f.read()
@@ -148,7 +172,6 @@ def decrypt_file(private_key_hex, input_file_path, output_file_path):
     
     with open(output_file_path, 'wb') as f:
         f.write(decrypted_data)
-      
 
 if __name__ == "__main__":
     root = tk.Tk()
