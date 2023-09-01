@@ -16,7 +16,7 @@ Make sure you have the following dependencies installed:
 You can install these dependencies using the following command:
 
 ```bash
-pip install eth-keys ecies web3
+pip install -r requirements.txt
 ```
 
 ## Usage
