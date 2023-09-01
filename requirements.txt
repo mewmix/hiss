@@ -1,5 +1,5 @@
 eth-keys==0.4.0
-ecies==0.15.0
+eciespy==0.15.0
 web3==6.8.0
 eth-account==0.8.0
 
