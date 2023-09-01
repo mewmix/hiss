@@ -116,7 +116,7 @@ else:
 ## Note
 
 - Make sure to replace placeholders like `'YOUR_PRIVATE_KEY_HERE'`, `'RECIPIENT_PUBLIC_KEY_HEX'`, `'YOUR_TRANSACTION_HASH_HERE'`, `'YOUR_ETHEREUM_PROVIDER_URL'`, and `'TARGET_ETHEREUM_ADDRESS'` with actual values.
-- This code is intended for educational and informational purposes. Use it responsibly and adhere to legal and ethical guidelines.
+- This code is intended for educational and informational purposes. 
 
 ```
 
