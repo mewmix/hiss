@@ -1,13 +1,11 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from eth_keys import keys
 from ecies import encrypt, decrypt
 import web3
 from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
 import os
-from ecies import encrypt, decrypt
-from tkinter import messagebox
 
 class CryptoApp:
     def __init__(self, root):
