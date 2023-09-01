@@ -21,8 +21,15 @@ Make sure you have the following dependencies installed:
 
 You can install these dependencies using the following command:
 
-```bash
+git clone https://github.com/mewmix/hiss
+
 pip install -r requirements.txt
+
+
+And then to run the GUI
+
+python hiss-gui.py
+
 ```
 
 #SCREENSHOTS
