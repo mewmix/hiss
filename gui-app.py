@@ -17,6 +17,16 @@ class CryptoApp:
         self.encrypt_file_button.pack()
         self.decrypt_file_button = tk.Button(self.root, text="Decrypt File", command=self.decrypt_file)
         self.decrypt_file_button.pack()
+        self.get_provider_label = tk.Label(self.root, text="Provider:")
+        self.get_provider_label.pack()
+        self.get_provider_label_entry = tk.Entry(self.root)
+        self.get_provider_label_entry.pack()
+        self.get_txn_hash_label = tk.Label(self.root, text="Transaction Hash:")
+        self.get_txn_hash_label.pack()
+        self.get_txn_hash_label_entry = tk.Entry(self.root)
+        self.get_txn_hash_label_entry.pack()
+        self.get_public_key_txn_button = tk.Button(self.root, text="Get Public Key from Transaction", command=self.get_public_key_txn)
+        self.get_public_key_txn_button.pack()
 
 
 
@@ -59,6 +69,14 @@ class CryptoApp:
         self.copy_button = tk.Button(self.root, text="Copy Result", command=self.copy_result)
         self.copy_button.pack()
     
+
+    def get_public_key_txn(self):
+        provider = self.get_provider_label_entry.get()
+        tx_hash = self.get_txn_hash_label_entry.get()
+        recovered_public_key, from_address = pubkey_txn(provider, tx_hash)
+        self.public_key_entry.delete(0, tk.END)
+        self.public_key_entry.insert(0, recovered_public_key.to_hex())
+        self.show_result(recovered_public_key.to_hex())
 
     def show_result(self, result):
         self.result_text.delete(1.0, tk.END)
