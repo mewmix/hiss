@@ -1,21 +1,14 @@
 
-#SCREENSHOTS
-
-<img width="289" alt="1" 
-src="https://github.com/mewmix/hiss/assets/42463809/c98d43b6-8f94-46d8-8502-c3b1cd7dafcb">
-<img width="673" alt="2" 
-src="https://github.com/mewmix/hiss/assets/42463809/9752b3c5-ccbb-4f99-a974-82ee25e7332b">
-<img width="680" alt="3" 
-src="https://github.com/mewmix/hiss/assets/42463809/794356d5-2dac-4882-a3f1-3b130ac4fbda">
-<img width="341" alt="Screen Shot 2023-08-31 at 9 05 42 PM" src="https://github.com/mewmix/hiss/assets/42463809/1d01a6bf-f336-4c79-ad0d-9492cd73f862">
 
 ```markdown
 
 #Windows
 
-# Ethereum Tools README
+# Hiss README
 
-This repository contains Python code for various Ethereum-related tools, including recovering public keys from transactions, encrypting and decrypting messages, and more.
+This repository contains Python script kiddy funcs for various Ethereum-related tools, including recovering public keys from transactions, encrypting and decrypting messages, and more.
+
+Credit to the original author of the public key from transaction hash dev in this linked issue -
 
 ## Prerequisites
 
@@ -32,6 +25,15 @@ You can install these dependencies using the following command:
 pip install -r requirements.txt
 ```
 
+#SCREENSHOTS
+
+<img width="289" alt="1" 
+src="https://github.com/mewmix/hiss/assets/42463809/c98d43b6-8f94-46d8-8502-c3b1cd7dafcb">
+<img width="673" alt="2" 
+src="https://github.com/mewmix/hiss/assets/42463809/9752b3c5-ccbb-4f99-a974-82ee25e7332b">
+<img width="680" alt="3" 
+src="https://github.com/mewmix/hiss/assets/42463809/794356d5-2dac-4882-a3f1-3b130ac4fbda">
+<img width="341" alt="Screen Shot 2023-08-31 at 9 05 42 PM" src="https://github.com/mewmix/hiss/assets/42463809/1d01a6bf-f336-4c79-ad0d-9492cd73f862">
 ## Usage
 
 ### Recover Public Key from Private Key
