@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import filedialog
 from eth_keys import keys
 from ecies import encrypt, decrypt
-from stegano import lsb
 import web3
 from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
