@@ -7,6 +7,8 @@ src="https://github.com/mewmix/hiss/assets/42463809/c98d43b6-8f94-46d8-8502-c3b1
 src="https://github.com/mewmix/hiss/assets/42463809/9752b3c5-ccbb-4f99-a974-82ee25e7332b">
 <img width="680" alt="3" 
 src="https://github.com/mewmix/hiss/assets/42463809/794356d5-2dac-4882-a3f1-3b130ac4fbda">
+<img width="341" alt="Screen Shot 2023-08-31 at 9 05 42 PM" src="https://github.com/mewmix/hiss/assets/42463809/1d01a6bf-f336-4c79-ad0d-9492cd73f862">
+
 ```markdown
 
 #Windows
