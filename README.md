@@ -6,7 +6,7 @@
 
 # Hiss README
 
-This repository contains Python script kiddy funcs for various Ethereum-related tools, including recovering public keys from transactions, encrypting and decrypting messages, and more.
+This repository contains Python script kiddy funcs for various Ethereum-related ECIES tools, including recovering public keys from transactions, encrypting and decrypting messages, and more.
 
 Credit to the original author of the public key from transaction hash dev in this linked issue -
 
