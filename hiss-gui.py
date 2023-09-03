@@ -81,8 +81,31 @@ class CryptoApp:
         self.copy_button = tk.Button(self.tab1, text="Copy Result", command=self.copy_result)
         self.copy_button.pack()
 
+        self.transaction_hashes_button = tk.Button(self.tab2, text="Get Transaction Hashes", command=self.get_transaction_hashes)        
+        self.transaction_hashes_button.pack()
+        # Create an entry field for the Etherscan API key
+        self.api_key_label = tk.Label(self.tab2, text="Etherscan API Key:")
+        self.api_key_label.pack()
+        self.api_key_entry = tk.Entry(self.tab2)
+        self.api_key_entry.pack()
 
+        # Create an entry field for the address
+        self.address_label = tk.Label(self.tab2, text="Address:")
+        self.address_label.pack()
+        self.address_entry = tk.Entry(self.tab2)
+        self.address_entry.pack()
+
+        self.get_transaction_hashes_button = tk.Button(self.tab2, text="Get Transaction Hashes", command=self.get_transaction_hashes)        
+        self.get_transaction_hashes_button.pack()
+
+    def get_transaction_hashes(self):
+        address = self.address_entry.get()  # Get the address from the entry field
+        api_key = self.api_key_entry.get()  # Get the API key from the entry field
+        txn_hashes = get_transaction_hashes(address, api_key)
         
+        # Display the transaction hashes in the result_text widget
+        self.show_result('\n'.join(txn_hashes))
+
     def get_public_key_txn(self):
         provider = self.get_provider_label_entry.get()
         tx_hash = self.get_txn_hash_label_entry.get()
@@ -130,6 +153,7 @@ class CryptoApp:
         encrypted_data = bytes.fromhex(self.encrypted_message_entry.get())
         decrypted_data = decrypt(private_key, encrypted_data)
         self.show_result(decrypted_data.decode())
+    
 
 def get_transaction_hashes(address, api_key):
     url = f"https://api.etherscan.io/api?module=account&action=txlist&address={address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey={api_key}"
