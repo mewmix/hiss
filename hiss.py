@@ -4,7 +4,27 @@ from ecies import encrypt, decrypt
 import web3
 from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
+import requests
 
+def get_transaction_hashes(address, api_key):
+    url = f"https://api.etherscan.io/api?module=account&action=txlist&address={address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey={api_key}"
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Check for HTTP errors
+
+        data = response.json()
+        if data['status'] == "1":
+            transactions = data['result']
+            txn_hashes = [txn['hash'] for txn in transactions]
+            return txn_hashes
+        else:
+            print("API request was not successful.")
+            return []
+
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        return []
 def pubkey_txn(provider, tx_hash):
     w3 = web3.Web3(web3.HTTPProvider(provider))
     tx = w3.eth.get_transaction(tx_hash)

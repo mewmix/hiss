@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
+
 from tkinter import filedialog, messagebox
 from eth_keys import keys
 from ecies import encrypt, decrypt
@@ -6,70 +8,81 @@ import web3
 from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
 import os
+import requests
+
 
 class CryptoApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Hissssss")
 
+        # Create a Notebook for tabbed interface
+        self.notebook = ttk.Notebook(self.root)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
 
-        self.encrypt_file_button = tk.Button(self.root, text="Encrypt File", command=self.encrypt_file)
+        # Create tabs
+        self.tab1 = tk.Frame(self.notebook)
+        self.tab2 = tk.Frame(self.notebook)
+
+        self.notebook.add(self.tab1, text="EVM/ECIES")  # Updated tab name
+        self.notebook.add(self.tab2, text="Experimental")  # Updated tab name
+
+        self.encrypt_file_button = tk.Button(self.tab1, text="Encrypt File", command=self.encrypt_file)
         self.encrypt_file_button.pack()
-        self.decrypt_file_button = tk.Button(self.root, text="Decrypt File", command=self.decrypt_file)
+        self.decrypt_file_button = tk.Button(self.tab1, text="Decrypt File", command=self.decrypt_file)
         self.decrypt_file_button.pack()
-        self.get_provider_label = tk.Label(self.root, text="Provider:")
+        self.get_provider_label = tk.Label(self.tab1, text="Provider:")
         self.get_provider_label.pack()
-        self.get_provider_label_entry = tk.Entry(self.root)
+        self.get_provider_label_entry = tk.Entry(self.tab1)
         self.get_provider_label_entry.pack()
-        self.get_txn_hash_label = tk.Label(self.root, text="Transaction Hash:")
+        self.get_txn_hash_label = tk.Label(self.tab1, text="Transaction Hash:")
         self.get_txn_hash_label.pack()
-        self.get_txn_hash_label_entry = tk.Entry(self.root)
+        self.get_txn_hash_label_entry = tk.Entry(self.tab1)
         self.get_txn_hash_label_entry.pack()
-        self.get_public_key_txn_button = tk.Button(self.root, text="Get Public Key from Transaction", command=self.get_public_key_txn)
+        self.get_public_key_txn_button = tk.Button(self.tab1, text="Get Public Key from Transaction", command=self.get_public_key_txn)
         self.get_public_key_txn_button.pack()
 
-
-
-        self.public_key_label = tk.Label(self.root, text="Recipient's Public Key:")
+        self.public_key_label = tk.Label(self.tab1, text="Recipient's Public Key:")
         self.public_key_label.pack()
 
-        self.public_key_entry = tk.Entry(self.root)
+        self.public_key_entry = tk.Entry(self.tab1)
         self.public_key_entry.pack()
 
-        self.message_label = tk.Label(self.root, text="Secret Message:")
+        self.message_label = tk.Label(self.tab1, text="Secret Message:")
         self.message_label.pack()
 
-        self.message_entry = tk.Entry(self.root)
+        self.message_entry = tk.Entry(self.tab1)
         self.message_entry.pack()
 
-        self.encrypt_button = tk.Button(self.root, text="Encrypt", command=self.encrypt_message)
+        self.encrypt_button = tk.Button(self.tab1, text="Encrypt", command=self.encrypt_message)
         self.encrypt_button.pack()
 
-        self.private_key_label = tk.Label(self.root, text="Your Private Key:")
+        self.private_key_label = tk.Label(self.tab1, text="Your Private Key:")
         self.private_key_label.pack()
 
-        self.private_key_entry = tk.Entry(self.root)
+        self.private_key_entry = tk.Entry(self.tab1)
         self.private_key_entry.pack()
 
-        self.encrypted_message_label = tk.Label(self.root, text="Encrypted Message:")
+        self.encrypted_message_label = tk.Label(self.tab1, text="Encrypted Message:")
         self.encrypted_message_label.pack()
 
-        self.encrypted_message_entry = tk.Entry(self.root)
+        self.encrypted_message_entry = tk.Entry(self.tab1)
         self.encrypted_message_entry.pack()
 
-        self.decrypt_button = tk.Button(self.root, text="Decrypt", command=self.decrypt_message)
+        self.decrypt_button = tk.Button(self.tab1, text="Decrypt", command=self.decrypt_message)
         self.decrypt_button.pack()
 
-        self.result_label = tk.Label(self.root, text="Result:")
+        self.result_label = tk.Label(self.tab1, text="Result:")
         self.result_label.pack()
 
-        self.result_text = tk.Text(self.root, height=5, width=40)
+        self.result_text = tk.Text(self.tab1, height=5, width=40)
         self.result_text.pack()
 
-        self.copy_button = tk.Button(self.root, text="Copy Result", command=self.copy_result)
+        self.copy_button = tk.Button(self.tab1, text="Copy Result", command=self.copy_result)
         self.copy_button.pack()
-    
 
+
+        
     def get_public_key_txn(self):
         provider = self.get_provider_label_entry.get()
         tx_hash = self.get_txn_hash_label_entry.get()
@@ -118,6 +131,25 @@ class CryptoApp:
         decrypted_data = decrypt(private_key, encrypted_data)
         self.show_result(decrypted_data.decode())
 
+def get_transaction_hashes(address, api_key):
+    url = f"https://api.etherscan.io/api?module=account&action=txlist&address={address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey={api_key}"
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Check for HTTP errors
+
+        data = response.json()
+        if data['status'] == "1":
+            transactions = data['result']
+            txn_hashes = [txn['hash'] for txn in transactions]
+            return txn_hashes
+        else:
+            print("API request was not successful.")
+            return []
+
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        return []
 
 def pubkey_txn(provider, tx_hash):
     w3 = web3.Web3(web3.HTTPProvider(provider))
