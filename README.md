@@ -32,11 +32,7 @@ src="https://github.com/mewmix/hiss/assets/42463809/9752b3c5-ccbb-4f99-a974-82ee
 src="https://github.com/mewmix/hiss/assets/42463809/794356d5-2dac-4882-a3f1-3b130ac4fbda">
 <img width="341" alt="Screen Shot 2023-08-31 at 9 05 42 PM" src="https://github.com/mewmix/hiss/assets/42463809/1d01a6bf-f336-4c79-ad0d-9492cd73f862">
 
-
-<video controls>
-  <source src="https://github-production-user-asset-6210df.s3.amazonaws.com/42463809/265600254-8ccabae6-60de-4919-a42e-b850cd71aac0.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+# [Video Decryption Example](https://github-production-user-asset-6210df.s3.amazonaws.com/42463809/265600254-8ccabae6-60de-4919-a42e-b850cd71aac0.mp4)
 
 ### Recover Public Key from Private Key
 
