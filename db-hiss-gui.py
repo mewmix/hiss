@@ -1,6 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
-
 from tkinter import filedialog, messagebox
 from eth_keys import keys
 from ecies import encrypt, decrypt
@@ -8,7 +6,9 @@ import web3
 from eth_account._utils.signing import extract_chain_id, to_standard_v
 from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
 import os
-import requests
+import hashlib
+import bcrypt
+import sqlite3
 
 
 class CryptoApp:
@@ -16,94 +16,138 @@ class CryptoApp:
         self.root = root
         self.root.title("Hissssss")
 
-        # Create a Notebook for tabbed interface
-        self.notebook = ttk.Notebook(self.root)
-        self.notebook.pack(fill=tk.BOTH, expand=True)
 
-        # Create tabs
-        self.tab1 = tk.Frame(self.notebook)
-        self.tab2 = tk.Frame(self.notebook)
-        self.tab3 = tk.Frame(self.notebook)
-        self.notebook.add(self.tab1, text="EVM/ECIES")  # Updated tab name
-        self.notebook.add(self.tab2, text="Lookup")  # Updated tab name
-        self.notebook.add(self.tab3, text="Vault")
-        self.encrypt_file_button = tk.Button(self.tab1, text="Encrypt File", command=self.encrypt_file)
+        self.encrypt_file_button = tk.Button(self.root, text="Encrypt File", command=self.encrypt_file)
         self.encrypt_file_button.pack()
-        self.decrypt_file_button = tk.Button(self.tab1, text="Decrypt File", command=self.decrypt_file)
+        self.decrypt_file_button = tk.Button(self.root, text="Decrypt File", command=self.decrypt_file)
         self.decrypt_file_button.pack()
-        self.get_provider_label = tk.Label(self.tab3, text="Provider:")
+        self.get_provider_label = tk.Label(self.root, text="Provider:")
         self.get_provider_label.pack()
-        self.get_provider_label_entry = tk.Entry(self.tab3)
+        self.get_provider_label_entry = tk.Entry(self.root)
         self.get_provider_label_entry.pack()
-        self.get_txn_hash_label = tk.Label(self.tab1, text="Transaction Hash:")
+        self.get_txn_hash_label = tk.Label(self.root, text="Transaction Hash:")
         self.get_txn_hash_label.pack()
-        self.get_txn_hash_label_entry = tk.Entry(self.tab1)
+        self.get_txn_hash_label_entry = tk.Entry(self.root)
         self.get_txn_hash_label_entry.pack()
-        self.get_public_key_txn_button = tk.Button(self.tab1, text="Get Public Key from Transaction", command=self.get_public_key_txn)
+        self.get_public_key_txn_button = tk.Button(self.root, text="Get Public Key from Transaction", command=self.get_public_key_txn)
         self.get_public_key_txn_button.pack()
 
-        self.public_key_label = tk.Label(self.tab1, text="Recipient's Public Key:")
+
+
+        self.public_key_label = tk.Label(self.root, text="Recipient's Public Key:")
         self.public_key_label.pack()
 
-        self.public_key_entry = tk.Entry(self.tab1)
+        self.public_key_entry = tk.Entry(self.root)
         self.public_key_entry.pack()
 
-        self.message_label = tk.Label(self.tab1, text="Message:")
+        self.message_label = tk.Label(self.root, text="Secret Message:")
         self.message_label.pack()
 
-        self.message_entry = tk.Entry(self.tab1)
+        self.message_entry = tk.Entry(self.root)
         self.message_entry.pack()
 
-        self.encrypt_button = tk.Button(self.tab1, text="Encrypt", command=self.encrypt_message)
+        self.encrypt_button = tk.Button(self.root, text="Encrypt", command=self.encrypt_message)
         self.encrypt_button.pack()
 
-        self.private_key_label = tk.Label(self.tab3, text="Your Private Key:")
+        self.private_key_label = tk.Label(self.root, text="Your Private Key:")
         self.private_key_label.pack()
 
-        self.private_key_entry = tk.Entry(self.tab3)
+        self.private_key_entry = tk.Entry(self.root)
         self.private_key_entry.pack()
 
-        self.encrypted_message_label = tk.Label(self.tab1, text="Encrypted Message:")
+        self.encrypted_message_label = tk.Label(self.root, text="Encrypted Message:")
         self.encrypted_message_label.pack()
 
-        self.encrypted_message_entry = tk.Entry(self.tab1)
+        self.encrypted_message_entry = tk.Entry(self.root)
         self.encrypted_message_entry.pack()
 
-        self.decrypt_button = tk.Button(self.tab1, text="Decrypt", command=self.decrypt_message)
+        self.decrypt_button = tk.Button(self.root, text="Decrypt", command=self.decrypt_message)
         self.decrypt_button.pack()
 
-        self.result_label = tk.Label(self.tab1, text="Result:")
+        self.result_label = tk.Label(self.root, text="Result:")
         self.result_label.pack()
 
-        self.result_text = tk.Text(self.tab1, height=5, width=40)
+        self.result_text = tk.Text(self.root, height=5, width=40)
         self.result_text.pack()
 
-        self.copy_button = tk.Button(self.tab1, text="Copy Result", command=self.copy_result)
+        self.copy_button = tk.Button(self.root, text="Copy Result", command=self.copy_result)
         self.copy_button.pack()
+         # Add buttons to save and load private key and provider
+        self.save_button = tk.Button(self.root, text="Save Keys", command=self.save_keys)
+        self.save_button.pack()
 
-        self.transaction_hashes_button = tk.Button(self.tab2, text="Get Transaction Hashes", command=self.get_transaction_hashes)        
-        self.transaction_hashes_button.pack()
-        # Create an entry field for the Etherscan API key
-        self.api_key_label = tk.Label(self.tab3, text="Etherscan API Key:")
-        self.api_key_label.pack()
-        self.api_key_entry = tk.Entry(self.tab3)
-        self.api_key_entry.pack()
+        self.load_button = tk.Button(self.root, text="Load Keys", command=self.load_keys)
+        self.load_button.pack()
 
-        # Create an entry field for the address
-        self.address_label = tk.Label(self.tab2, text="Address:")
-        self.address_label.pack()
-        self.address_entry = tk.Entry(self.tab2)
-        self.address_entry.pack()
+        # Initialize provider and private_key variables
+        self.provider = ""
+        self.private_key = ""
 
+        # Create a SQLite database for storing keys (encrypted)
+        self.conn = sqlite3.connect('crypto_keys.db')
+        self.cursor = self.conn.cursor()
 
+        # Encrypt the SQLite database with SQLCipher
+        self.conn.execute("ATTACH DATABASE 'crypto_keys.db' AS encrypted KEY 'your_password'")
 
-    def get_transaction_hashes(self):
-        address = self.address_entry.get()  # Get the address from the entry field
-        api_key = self.api_key_entry.get()  # Get the API key from the entry field
-        txn_hashes = get_transaction_hashes(address, api_key)
-        
-        # Display the transaction hashes in the result_text widget
-        self.show_result('\n'.join(txn_hashes))
+        # Create a table to store keys if it doesn't exist
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS keys (
+                id INTEGER PRIMARY KEY,
+                provider TEXT,
+                private_key TEXT
+            )
+        ''')
+
+    # ... your existing methods ...
+
+    def hash_password(self, password):
+        # Generate a random salt
+        salt = bcrypt.gensalt()
+        # Hash the password with the salt
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        return hashed_password.decode('utf-8')
+
+    def save_keys(self):
+        # Get the provider and private key from the respective entries
+        self.provider = self.get_provider_label_entry.get()
+        self.private_key = self.private_key_entry.get()
+
+        # Hash the private key before storing it
+        hashed_private_key = self.hash_password(self.private_key)
+
+        # Insert or update the hashed keys in the database
+        self.cursor.execute('DELETE FROM keys')
+        self.cursor.execute('INSERT INTO keys (provider, private_key) VALUES (?, ?)', (self.provider, hashed_private_key))
+        self.conn.commit()
+        messagebox.showinfo("Saved", "Keys have been saved!")
+
+    def load_keys(self):
+        # Retrieve the hashed keys from the database
+        self.cursor.execute('SELECT provider, private_key FROM keys LIMIT 1')
+        row = self.cursor.fetchone()
+        if row:
+            self.provider, hashed_private_key = row
+            self.get_provider_label_entry.delete(0, tk.END)
+            self.get_provider_label_entry.insert(0, self.provider)
+
+            # You should provide a way to enter the password for decryption here
+            password = tk.simpledialog.askstring("Password", "Enter the password for private key decryption:")
+
+            # Check if the entered password matches the stored hash
+            if bcrypt.checkpw(password.encode('utf-8'), hashed_private_key.encode('utf-8')):
+                self.private_key_entry.delete(0, tk.END)
+                self.private_key_entry.insert(0, "**********")  # Show a placeholder for the private key
+                messagebox.showinfo("Loaded", "Keys have been loaded!")
+            else:
+                messagebox.showwarning("Invalid Password", "Incorrect password for private key.")
+
+        else:
+            messagebox.showwarning("Not Found", "No keys found in the database.")
+
+    def __del__(self):
+        # Close the database connection when the app is destroyed
+        self.conn.close()
 
     def get_public_key_txn(self):
         provider = self.get_provider_label_entry.get()
@@ -152,27 +196,7 @@ class CryptoApp:
         encrypted_data = bytes.fromhex(self.encrypted_message_entry.get())
         decrypted_data = decrypt(private_key, encrypted_data)
         self.show_result(decrypted_data.decode())
-    
 
-def get_transaction_hashes(address, api_key):
-    url = f"https://api.etherscan.io/api?module=account&action=txlist&address={address}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey={api_key}"
-    
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Check for HTTP errors
-
-        data = response.json()
-        if data['status'] == "1":
-            transactions = data['result']
-            txn_hashes = [txn['hash'] for txn in transactions]
-            return txn_hashes
-        else:
-            print("API request was not successful.")
-            return []
-
-    except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
-        return []
 
 def pubkey_txn(provider, tx_hash):
     w3 = web3.Web3(web3.HTTPProvider(provider))
