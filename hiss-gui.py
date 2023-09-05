@@ -23,17 +23,17 @@ class CryptoApp:
         # Create tabs
         self.tab1 = tk.Frame(self.notebook)
         self.tab2 = tk.Frame(self.notebook)
-
+        self.tab3 = tk.Frame(self.notebook)
         self.notebook.add(self.tab1, text="EVM/ECIES")  # Updated tab name
-        self.notebook.add(self.tab2, text="Experimental")  # Updated tab name
-
+        self.notebook.add(self.tab2, text="Lookup")  # Updated tab name
+        self.notebook.add(self.tab3, text="Vault")
         self.encrypt_file_button = tk.Button(self.tab1, text="Encrypt File", command=self.encrypt_file)
         self.encrypt_file_button.pack()
         self.decrypt_file_button = tk.Button(self.tab1, text="Decrypt File", command=self.decrypt_file)
         self.decrypt_file_button.pack()
-        self.get_provider_label = tk.Label(self.tab1, text="Provider:")
+        self.get_provider_label = tk.Label(self.tab3, text="Provider:")
         self.get_provider_label.pack()
-        self.get_provider_label_entry = tk.Entry(self.tab1)
+        self.get_provider_label_entry = tk.Entry(self.tab3)
         self.get_provider_label_entry.pack()
         self.get_txn_hash_label = tk.Label(self.tab1, text="Transaction Hash:")
         self.get_txn_hash_label.pack()
@@ -48,7 +48,7 @@ class CryptoApp:
         self.public_key_entry = tk.Entry(self.tab1)
         self.public_key_entry.pack()
 
-        self.message_label = tk.Label(self.tab1, text="Secret Message:")
+        self.message_label = tk.Label(self.tab1, text="Message:")
         self.message_label.pack()
 
         self.message_entry = tk.Entry(self.tab1)
@@ -57,10 +57,10 @@ class CryptoApp:
         self.encrypt_button = tk.Button(self.tab1, text="Encrypt", command=self.encrypt_message)
         self.encrypt_button.pack()
 
-        self.private_key_label = tk.Label(self.tab1, text="Your Private Key:")
+        self.private_key_label = tk.Label(self.tab3, text="Your Private Key:")
         self.private_key_label.pack()
 
-        self.private_key_entry = tk.Entry(self.tab1)
+        self.private_key_entry = tk.Entry(self.tab3)
         self.private_key_entry.pack()
 
         self.encrypted_message_label = tk.Label(self.tab1, text="Encrypted Message:")
@@ -84,9 +84,9 @@ class CryptoApp:
         self.transaction_hashes_button = tk.Button(self.tab2, text="Get Transaction Hashes", command=self.get_transaction_hashes)        
         self.transaction_hashes_button.pack()
         # Create an entry field for the Etherscan API key
-        self.api_key_label = tk.Label(self.tab2, text="Etherscan API Key:")
+        self.api_key_label = tk.Label(self.tab3, text="Etherscan API Key:")
         self.api_key_label.pack()
-        self.api_key_entry = tk.Entry(self.tab2)
+        self.api_key_entry = tk.Entry(self.tab3)
         self.api_key_entry.pack()
 
         # Create an entry field for the address
@@ -95,8 +95,7 @@ class CryptoApp:
         self.address_entry = tk.Entry(self.tab2)
         self.address_entry.pack()
 
-        self.get_transaction_hashes_button = tk.Button(self.tab2, text="Get Transaction Hashes", command=self.get_transaction_hashes)        
-        self.get_transaction_hashes_button.pack()
+
 
     def get_transaction_hashes(self):
         address = self.address_entry.get()  # Get the address from the entry field
