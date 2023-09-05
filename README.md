@@ -24,12 +24,12 @@ python hiss-gui.py
 
 #SCREENSHOTS
 
+#MACOS
+
 <img width="289" alt="1" 
 src="https://github.com/mewmix/hiss/assets/42463809/c98d43b6-8f94-46d8-8502-c3b1cd7dafcb">
-<img width="673" alt="2" 
-src="https://github.com/mewmix/hiss/assets/42463809/9752b3c5-ccbb-4f99-a974-82ee25e7332b">
-<img width="680" alt="3" 
-src="https://github.com/mewmix/hiss/assets/42463809/794356d5-2dac-4882-a3f1-3b130ac4fbda">
+
+#WINDOWS
 <img width="341" alt="Screen Shot 2023-08-31 at 9 05 42 PM" src="https://github.com/mewmix/hiss/assets/42463809/1d01a6bf-f336-4c79-ad0d-9492cd73f862">
 
 # [Video Decryption Example](https://github-production-user-asset-6210df.s3.amazonaws.com/42463809/265600254-8ccabae6-60de-4919-a42e-b850cd71aac0.mp4)
