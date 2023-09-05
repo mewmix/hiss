@@ -2,22 +2,12 @@
 
 ```markdown
 
-#Windows
 
-# Hiss README
+# README
 
 This repository contains Python script kiddy funcs for various Ethereum-related ECIES tools, including recovering public keys from transactions, encrypting and decrypting messages, and more.
 
 Credit to the original author of the public key from transaction hash dev in this linked issue -
-
-## Prerequisites
-
-Make sure you have the following dependencies installed:
-
-- Python 3.x
-- `eth-keys` library
-- `ecies` library
-- `web3` library
 
 You can install these dependencies using the following command:
 
@@ -41,7 +31,9 @@ src="https://github.com/mewmix/hiss/assets/42463809/9752b3c5-ccbb-4f99-a974-82ee
 <img width="680" alt="3" 
 src="https://github.com/mewmix/hiss/assets/42463809/794356d5-2dac-4882-a3f1-3b130ac4fbda">
 <img width="341" alt="Screen Shot 2023-08-31 at 9 05 42 PM" src="https://github.com/mewmix/hiss/assets/42463809/1d01a6bf-f336-4c79-ad0d-9492cd73f862">
-## Usage
+
+
+<img width="341" alt="Screen Shot 2023-08-31 at 9 05 42 PM" src="https://github.com/mewmix/hiss/assets/42463809/8ccabae6-60de-4919-a42e-b850cd71aac0">
 
 ### Recover Public Key from Private Key
 
